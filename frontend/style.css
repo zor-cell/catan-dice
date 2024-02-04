@@ -121,25 +121,10 @@ table td {
     gap: 5px;
 }
 
-#info-container {
-    position: fixed;
-    bottom: 0px;
-    left: 50%;
-    transform: translateX(-50%); 
-
-    height: 25%;
-
-    overflow: auto;
+.roll {
+    font-size: var(--fs-400)
 }
 
-#room-container, #game-master, #show-users-button, #next-button {
-    display: none;
-}
-
-#room-container {
-    gap: 20px;
-}
-
-#username-input {
-    margin-bottom: 20px;
+.small-p {
+    font-size: var(--fs-300)
 }
