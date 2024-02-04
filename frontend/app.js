@@ -197,15 +197,16 @@ function App() {
                 <p className="small-p">The amount of cards that aren't used before the cards are reshuffled.</p>
                 <input type="number" min="0" max="36" value={shuffleThreshold} onChange={changeShuffleThreshold}></input>
             </div>}
-            {gameModeId != 0 && <div>
-                <h3>Card Deck</h3>
-                <div><button onClick={clearCards}>Clear Card Deck</button></div>
-            </div>}
             {gameModeId == 2 && <div>
                 <h3>Event Card Reshuffle Threshold</h3>
                 <p className="small-p">The amount of event cards that aren't used before the event cards are reshuffled.</p>
                 <input type="number" min="0" max="6" value={eventShuffleThreshold} onChange={changeEventShuffleThreshold}></input>
             </div>}
+            {gameModeId != 0 && <div>
+                <h3>Card Deck</h3>
+                <div><button onClick={clearCards}>Clear Card Deck</button></div>
+            </div>}
+
             <div>
                 <h3>Roll History</h3>
                 <div><button onClick={toggleRollHistory}>{showRollHistory ? "Hide" : "Show"} Roll History</button></div>
