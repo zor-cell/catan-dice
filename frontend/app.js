@@ -104,7 +104,7 @@ function App() {
 
     React.useEffect(() => {
         showHistogram();
-    }, [rollHistory]);
+    }, [rollHistory, showRollHistory]);
 
     function changeMode(event) {
         let id = event.target.value;
@@ -133,9 +133,6 @@ function App() {
     }
 
     function toggleRollHistory(event) {
-        //show histogram if we are switching from hide to show
-        if(!showRollHistory) showHistogram();
-
         setShowRollHistory(!showRollHistory);
     }
 
@@ -185,8 +182,8 @@ function App() {
     function showHistogram() {
         let container = document.getElementById('histogram');
 
-        if(container == null || container.parentNode.style.display === "none") return;
-        
+        if(container == null || !showRollHistory) return;
+
         const RESULTS = 11;
         let x = [];
         for (let i = 0; i < RESULTS; i++) {
