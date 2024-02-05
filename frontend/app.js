@@ -208,10 +208,13 @@ function App() {
 
         var data = [trace];
         let layout = {
-            title: "Statistic of " + rollHistory.length + " Roll" + (rollHistory.length == 1 ? "" : "s"),
+            title: "Histogram of " + rollHistory.length + " Roll" + (rollHistory.length == 1 ? "" : "s"),
             bargap: 0.02,
-            //width: 400,
-            //height: 200,
+            xaxis: {
+                autotick: false,
+                tick0: 2,
+                dtick: 1,
+            },
         }
         Plotly.newPlot('histogram', data, layout, {responsive: true});
     }
@@ -267,7 +270,7 @@ function App() {
             </div>}
             <div>
                 <h3>Last Roll</h3>
-                <ShowRoll show_sum="true" roll={currentRoll}/>
+                <DisplayDiceRoll show_sum="true" roll={currentRoll}/>
             </div>
 
             <div className="flex-container" id="history-container">
@@ -279,7 +282,7 @@ function App() {
                     <div id="history-list">
                         <ul>
                         {rollHistory.map((dice_roll, key) => {
-                            return <ShowRoll roll={dice_roll} key={key} />;
+                            return <DisplayDiceRoll roll={dice_roll} key={key} />;
                         })}
                         </ul>
                     </div>
@@ -295,7 +298,7 @@ ReactDOM.render(
     document.getElementById('container')
 );
 
-function ShowRoll(props) {
+function DisplayDiceRoll(props) {
     //empty roll result
     if(props.roll == null) return <div>
         <p className="roll">None</p>
