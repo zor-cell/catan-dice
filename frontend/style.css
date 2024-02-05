@@ -13,7 +13,7 @@
     --clr-primary-600: hsl(340, 100%, 21%);
     --clr-primary-500: hsl(332, 98%, 33%);
     --clr-primary-400: hsl(328, 92%, 47%);
-    --clr-primary-300: hsl(327, 88%, 68%);
+    --clr-primary-300: rgb(245, 102, 181);
     --clr-primary-200: hsl(310, 100%, 82%);
     --clr-primary-100: hsl(310, 100%, 97%);
 
@@ -122,7 +122,7 @@ table td {
 }
 
 .roll {
-    font-size: var(--fs-400)
+    font-size: var(--fs-400);
 }
 
 .small-p {
@@ -130,6 +130,10 @@ table td {
 }
 
 #history-container {
+    width: 100%;
+}
+
+#histogram-container {
     display: flex;
 
     background-color: white;
@@ -140,16 +144,16 @@ table td {
     border: 1px solid var(--clr-primary-300);
 }
 
-#history-list {
-    overflow-y: scroll;
+#histogram {
+    flex: 1 0 auto;
+}
 
+#history-list {
+    width: max-content;
+
+    overflow-y: scroll;
+    
     padding: 5px;
 
     border-left: 1px solid var(--clr-primary-300);
-}
-
-#histogram {
-    background-color: white;
-
-    height: 100%;
 }

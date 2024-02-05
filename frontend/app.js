@@ -201,14 +201,19 @@ function App() {
             x: x,
             y: y,
             type: "bar",
+            marker: {
+                //color: 'rgb(245, 102, 181)'
+            }
         };
 
         var data = [trace];
         let layout = {
             title: "Statistic of " + rollHistory.length + " Roll" + (rollHistory.length == 1 ? "" : "s"),
-            bargap: 0.02
+            bargap: 0.02,
+            //width: 400,
+            //height: 200,
         }
-        Plotly.newPlot('histogram', data, layout);
+        Plotly.newPlot('histogram', data, layout, {responsive: true});
     }
 
     return (
@@ -265,11 +270,11 @@ function App() {
                 <ShowRoll show_sum="true" roll={currentRoll}/>
             </div>
 
-            <div className="flex-container">
+            <div className="flex-container" id="history-container">
                 <h3>Roll History</h3>
                 <p style={{display: showRollHistory ? "none" : "block"}}>Hidden</p>
                 {showRollHistory && rollHistory.length == 0 ? <p>None</p> :
-                <div style={{display: showRollHistory ? "flex" : "none"}} id="history-container">
+                <div style={{display: showRollHistory ? "flex" : "none"}} id="histogram-container">
                     <div id="histogram"></div>
                     <div id="history-list">
                         <ul>
