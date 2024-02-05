@@ -14,15 +14,12 @@ const MODES = [
 //allow to choose if default and red are probability or card mode
 //and allot to choose if event is prob or card mode
 
-//histogram for all modes actually
-
-//toggle showing roll history
 //save roll history when page reloaded
 // --> clear roll history
 
 //use dice sprites
 
-//clear histoies on mode change
+//diagram width is not correct when rolling in hidden mode and showing history again
 
 //a pair of a default and red dice
 function dicePair(dice_default, dice_red) {
@@ -136,6 +133,9 @@ function App() {
     }
 
     function toggleRollHistory(event) {
+        //show histogram if we are switching from hide to show
+        if(!showRollHistory) showHistogram();
+
         setShowRollHistory(!showRollHistory);
     }
 
@@ -183,8 +183,10 @@ function App() {
     }
 
     function showHistogram() {
-        if(document.getElementById('histogram') == null) return;
+        let container = document.getElementById('histogram');
 
+        if(container == null || container.parentNode.style.display === "none") return;
+        
         const RESULTS = 11;
         let x = [];
         for (let i = 0; i < RESULTS; i++) {
