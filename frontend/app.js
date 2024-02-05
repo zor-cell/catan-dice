@@ -59,8 +59,8 @@ function shuffleEventCards() {
     return shuffle(array)
 }
 
+//shuffle array randomly
 function shuffle(array) {
-    //shuffle array randomly
     let oldElement;
     for (let i = array.length - 1; i > 0; i--) {
         let rand = Math.floor(Math.random() * (i + 1));
@@ -212,7 +212,7 @@ function App() {
                 dtick: 1,
             },
         }
-        Plotly.newPlot('histogram', data, layout, {responsive: true});
+        Plotly.newPlot('histogram', data, layout, {responsive: true, displayModeBar: false});
     }
 
     return (
