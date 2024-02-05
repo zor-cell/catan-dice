@@ -121,8 +121,8 @@ table td {
     gap: 5px;
 }
 
-.roll {
-    font-size: var(--fs-400);
+.dice {
+    padding: 2px;
 }
 
 .small-p {
@@ -131,6 +131,12 @@ table td {
 
 #history-container {
     width: 100%;
+}
+
+@media (min-width: 50em) {
+    #history-container {
+        width: 50%;
+    }
 }
 
 #histogram-container {

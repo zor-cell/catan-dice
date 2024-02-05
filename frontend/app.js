@@ -1,6 +1,6 @@
 const DICE_DEFAULT = [1, 2, 3, 4, 5, 6];
 const DICE_RED = [1, 2, 3, 4, 5, 6];
-const DICE_EVENT = ['B', 'B', 'B', 'y', 'b', 'g'];
+const DICE_EVENT = ['e', 'e', 'e', 'y', 'b', 'g'];
 
 //ids should be indices
 const MODES = [
@@ -16,10 +16,7 @@ const MODES = [
 
 //save roll history when page reloaded
 // --> clear roll history
-
-//use dice sprites
-
-//diagram width is not correct when rolling in hidden mode and showing history again
+//ask if the last game should be continued
 
 //a pair of a default and red dice
 function dicePair(dice_default, dice_red) {
@@ -305,15 +302,9 @@ function DisplayDiceRoll(props) {
 
     //show roll result
     return <div>
-        <p className="roll">
-            {props.roll.dice_default} 
-            <span style={{color: "red"}}> {props.roll.dice_red} </span> 
-            <span style={{color: 
-                props.roll.dice_event == 'B' ? "black" : 
-                props.roll.dice_event == 'y' ? "yellow" :
-                props.roll.dice_event == 'b' ? "blue" : "green"
-                }}>{'\u2588'}</span>
-        </p>
+        <img className="dice" src={"assets/" + props.roll.dice_default + ".svg"} width="20"/>
+        <img className="dice" src={"assets/" + props.roll.dice_red + "_red.svg"} width="20"/>
+        <img className="dice" src={"assets/" + props.roll.dice_event + ".svg"} width="20"/>
         {props.show_sum && <p className="roll">{props.roll.sum}</p>}
     </div>
 }
