@@ -105,6 +105,10 @@ function App() {
         //if storage has less cards than cards -> read from storage
     },  [cards]);*/
 
+    React.useEffect(() => {
+        showHistogram();
+    }, [rollHistory]);
+
     function changeMode(event) {
         let id = event.target.value;
 
@@ -112,23 +116,23 @@ function App() {
     }
 
     function changeShuffleThreshold(event) {
-        setShuffleThreshold(event.target.value);
+        setShuffleThreshold(parseInt(event.target.value));
     }
 
     function changeEventShuffleThreshold(event) {
-        setEventShuffleThreshold(event.target.value);
+        setEventShuffleThreshold(parseInt(event.target.value));
     }
 
     function clearCards(event) {
-        if(!confirm("Are you sure you want to clear the roll history? The data cannot be retrieved. This reshuffles the cards, if you are using a card mode.")) return;
+        //if(!confirm("Are you sure you want to clear the roll history? The data cannot be retrieved. This reshuffles the cards, if you are using a card mode.")) return;
 
         //force reshuffle
         setCards(shuffleCards);
 
-        clearRollHistory();
+        //clearRollHistory();
 
         //clear history from localStorage
-        window.localStorage.removeItem('cards');
+        //window.localStorage.removeItem('cards');
     }
 
     function toggleRollHistory(event) {
@@ -163,7 +167,7 @@ function App() {
                 //make event dice card based as well
                 dice_event = eventCards[eventCards.length - 1];
 
-                if(eventCards.length - 1 == eventShuffleThreshold) setEventCards(shuffleEventCards);
+                if(eventCards.length - 1 === eventShuffleThreshold) setEventCards(shuffleEventCards);
                 else setEventCards([...eventCards].slice(0, -1));
             }
 
@@ -176,6 +180,35 @@ function App() {
 
         setCurrentRoll(roll);
         setRollHistory([roll, ...rollHistory]);
+    }
+
+    function showHistogram() {
+        if(document.getElementById('histogram') == null) return;
+
+        const RESULTS = 11;
+        let x = [];
+        for (let i = 0; i < RESULTS; i++) {
+            x[i] = i + 2;
+        }
+
+        let y = Array(RESULTS).fill(0);
+        for(let i = 0;i < rollHistory.length;i++) {
+            let index = rollHistory[i].sum - 2;
+            y[index]++;
+        }
+
+        let trace = {
+            x: x,
+            y: y,
+            type: "bar",
+        };
+
+        var data = [trace];
+        let layout = {
+            title: "Statistic of " + rollHistory.length + " Roll" + (rollHistory.length == 1 ? "" : "s"),
+            bargap: 0.02
+        }
+        Plotly.newPlot('histogram', data, layout);
     }
 
     return (
@@ -232,15 +265,20 @@ function App() {
                 <ShowRoll show_sum="true" roll={currentRoll}/>
             </div>
 
-            <div>
+            <div className="flex-container">
                 <h3>Roll History</h3>
-                {showRollHistory ?
-                rollHistory.length == 0 ? <p>None</p> :
-                <ul>
-                {rollHistory.map((dice_roll, key) => {
-                    return <ShowRoll roll={dice_roll} key={key} />;
-                })}
-                </ul> : <p>Hidden</p>}
+                <p style={{display: showRollHistory ? "none" : "block"}}>Hidden</p>
+                {showRollHistory && rollHistory.length == 0 ? <p>None</p> :
+                <div style={{display: showRollHistory ? "flex" : "none"}} id="history-container">
+                    <div id="histogram"></div>
+                    <div id="history-list">
+                        <ul>
+                        {rollHistory.map((dice_roll, key) => {
+                            return <ShowRoll roll={dice_roll} key={key} />;
+                        })}
+                        </ul>
+                    </div>
+                </div>}
             </div>
         </section>
       </main>
