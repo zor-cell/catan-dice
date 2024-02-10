@@ -210,6 +210,38 @@ function App() {
             },
         }
         Plotly.newPlot('histogram', data, layout, {responsive: true, displayModeBar: false});
+
+        //event plot
+        /*x = ['e', 'y', 'g', 'b'];
+        let temp = {};
+        for(let i = 0;i < rollHistory.length;i++) {
+            let key = rollHistory[i].dice_event;
+            if(key in temp) temp[key]++;
+            else temp[key] = 1;
+        }
+
+        y = Array(x.length).fill(0);
+        for(let i = 0;i < x.length;i++) {
+            let key = x[i];
+            if(key in temp) y[i] = temp[key];
+        }
+
+        trace = {
+            x: x,
+            y: y,
+            type: "bar",
+        };
+        data = [trace];
+        layout = {
+            title: "Event Histogram of " + rollHistory.length + " Roll" + (rollHistory.length == 1 ? "" : "s"),
+            bargap: 0.02,
+            xaxis: {
+                autotick: false,
+                tick0: 2,
+                dtick: 1,
+            },
+        };
+        Plotly.newPlot('histogram-event', data, layout, {responsive: true, displayModeBar: false});*/
     }
 
     return (
