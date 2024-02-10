@@ -2,13 +2,6 @@ const DICE_DEFAULT = [1, 2, 3, 4, 5, 6];
 const DICE_RED = [1, 2, 3, 4, 5, 6];
 const DICE_EVENT = ['e', 'e', 'e', 'y', 'b', 'g'];
 
-//ids should be indices
-const MODES = [
-    {id: 0, value: "Probability Distribution Mode"},
-    {id: 1, value: "Card Mode"},
-    {id: 2, value: "Card Mode (All Dice)"}
-];
-
 //TODO
 // --> all dice and event dice only
 //allow to choose if default and red are probability or card mode
@@ -73,44 +66,38 @@ function shuffle(array) {
 }
 
 function App() {
-    const [gameModeId, setGameModeId] = React.useState(MODES[0].id);
-    const [currentRoll, setCurrentRoll] = React.useState(null);
+    const [classicDiceIsCardsMode, setClassicDiceIsCardsMode] = React.useState(false);
+    const [eventDiceIsCardsMode, setEventDiceIsCardsMode] = React.useState(false);
 
+    const [currentRoll, setCurrentRoll] = React.useState(null);
     const [rollHistory, setRollHistory] = React.useState([]);
     const [showRollHistory, setShowRollHistory] = React.useState(true);
 
     const [cards, setCards] = React.useState(shuffleCards);
-    const [shuffleThreshold, setShuffleThreshold] = React.useState(5);
+    const [cardShuffleThreshold, setCardShuffleThreshold] = React.useState(5);
+    const [cardsIsShuffle, setCardsIsShuffle] = React.useState(false);
+    const [cardsLeftover, setCardsLeftover] = React.useState([]);
 
     const [eventCards, setEventCards] = React.useState(shuffleEventCards);
     const [eventShuffleThreshold, setEventShuffleThreshold] = React.useState(0);
-
-
-    //load cards into local storage every time it gets updated
-    /*React.useEffect(() => {
-        let stored = JSON.parse(window.localStorage.getItem('cards'));
-
-        console.log((stored == null ? "null" : stored.length), cards.length);
-        if(stored == null || stored.length == cards.length + 1) window.localStorage.setItem('cards', JSON.stringify(cards));
-
-        stored = JSON.parse(window.localStorage.getItem('cards'));
-        console.log(stored, cards)
-
-        //if storage has less cards than cards -> read from storage
-    },  [cards]);*/
+    const [eventCardsIsShuffle, setEventCardsIsShuffle] = React.useState(false);
+    const [eventCardsLeftover, setEventCardsLeftover] = React.useState([]);
 
     React.useEffect(() => {
         showHistogram();
     }, [rollHistory, showRollHistory]);
 
-    function changeMode(event) {
-        let id = event.target.value;
+    function toggleClassicDiceMode(event) {
+        setClassicDiceIsCardsMode(!classicDiceIsCardsMode);
+    }
 
-        setGameModeId(id);
+    
+    function toggleEventDiceMode(event) {
+        setEventDiceIsCardsMode(!eventDiceIsCardsMode);
     }
 
     function changeShuffleThreshold(event) {
-        setShuffleThreshold(parseInt(event.target.value));
+        setCardShuffleThreshold(parseInt(event.target.value));
     }
 
     function changeEventShuffleThreshold(event) {
@@ -118,15 +105,13 @@ function App() {
     }
 
     function clearCards(event) {
-        //if(!confirm("Are you sure you want to clear the roll history? The data cannot be retrieved. This reshuffles the cards, if you are using a card mode.")) return;
-
-        //force reshuffle
         setCards(shuffleCards);
+        setCardsIsShuffle(false);
+    }
 
-        //clearRollHistory();
-
-        //clear history from localStorage
-        //window.localStorage.removeItem('cards');
+    function clearEventCards(event) {
+        setEventCards(shuffleEventCards);
+        setEventCardsIsShuffle(false);
     }
 
     function toggleRollHistory(event) {
@@ -137,40 +122,52 @@ function App() {
         setRollHistory([]);
     }
 
-    function rollDice(event) {
-        let roll;
-
-        if(gameModeId == 0) {
-            let d = randElement(DICE_DEFAULT);
-            let r = randElement(DICE_RED);
-            let dice_event = randElement(DICE_EVENT);
-
-            let pair = new dicePair(d, r);
-            roll = new diceRoll(pair, dice_event);
-        } else {
-            /*let storage = JSON.parse(window.localStorage.getItem('cards'));
-            if(storage.length != cards.length) {
-                console.log(storage.length, cards.length);
-                setCards(storage);
-            }*/
-
-            let pair = cards[cards.length - 1];
-            let dice_event = randElement(DICE_EVENT);
-
-            if(gameModeId == 2) {
-                //make event dice card based as well
-                dice_event = eventCards[eventCards.length - 1];
-
-                if(eventCards.length - 1 === eventShuffleThreshold) setEventCards(shuffleEventCards);
-                else setEventCards([...eventCards].slice(0, -1));
-            }
-
-            roll = new diceRoll(pair, dice_event);
+    function chooseDicePair() {
+        if(classicDiceIsCardsMode) {
+            let dice_pair = cards[cards.length - 1];
 
             //if card length reaches threshold they are reshuffled
-            if(cards.length - 1 === shuffleThreshold) setCards(shuffleCards);
-            else setCards([...cards].slice(0, -1));  //update cards (pop off last element)
+            if(cards.length - 1 <= cardShuffleThreshold) {
+                setCardsLeftover([...cards].slice(0, -1));
+                setCardsIsShuffle(true);
+                setCards(shuffleCards);
+            } else {
+                setCards([...cards].slice(0, -1));  //update cards (pop off last element)
+                setCardsIsShuffle(false);
+            }
+
+            return dice_pair;
         }
+
+        //probability mode
+        return new dicePair(randElement(DICE_DEFAULT), randElement(DICE_RED));
+    }
+
+    function chooseDiceEvent() {
+        if(eventDiceIsCardsMode) {
+            let dice_event = eventCards[eventCards.length - 1];
+
+            if(eventCards.length - 1 <= eventShuffleThreshold) {
+                setEventCardsLeftover([...eventCards].slice(0, -1));
+                setEventCardsIsShuffle(true);
+                setEventCards(shuffleEventCards);
+            } else {
+                setEventCards([...eventCards].slice(0, -1));
+                setEventCardsIsShuffle(false);
+            }
+
+            return dice_event;
+        }
+
+        //probability mode
+        return randElement(DICE_EVENT)
+    }
+
+    function rollDice(event) {
+        let dice_pair = chooseDicePair();
+        let dice_event = chooseDiceEvent();
+
+        let roll = new diceRoll(dice_pair, dice_event);
 
         setCurrentRoll(roll);
         setRollHistory([roll, ...rollHistory]);
@@ -223,26 +220,41 @@ function App() {
             <div>
                 <h3>Dice Mode</h3>
                 <p className="small-p">The mode of dice rolls.</p>
-                <select onChange={changeMode}>
-                    {MODES.map((mode, key) => {
-                        return <option value={mode.id} key={key}>{mode.value}</option>
-                    })}
-                </select>
+
+                <div className="flex-container-horizontal">
+                    <div>
+                        <h4>Classic dice</h4>
+                        <button onClick={toggleClassicDiceMode}>Set {!classicDiceIsCardsMode ? "Card" : "Probability"} Mode</button>
+                    </div>
+                    <div>
+                        <h4>Event die</h4>
+                        <button onClick={toggleEventDiceMode}>Set {!eventDiceIsCardsMode ? "Card" : "Probability"} Mode</button>
+                    </div>
+                </div>
             </div>
-            {gameModeId != 0 && <div>
-                <h3>Reshuffle Threshold</h3>
-                <p className="small-p">The amount of cards that aren't used before the cards are reshuffled.</p>
-                <input type="number" min="0" max="36" value={shuffleThreshold} onChange={changeShuffleThreshold}></input>
+            {classicDiceIsCardsMode && <div className="flex-container">
+                <div>
+                    <h3>Card Deck</h3>
+                    <button onClick={clearCards}>Reshuffle Card Deck</button>
+                </div>
+                <div>
+                    <h3>Reshuffle Threshold</h3>
+                    <p className="small-p">The amount of cards that aren't used before the cards are reshuffled.</p>
+                    <input type="number" min="0" max="35" value={cardShuffleThreshold} onChange={changeShuffleThreshold}></input>
+                </div>
             </div>}
-            {gameModeId == 2 && <div>
-                <h3>Event Card Reshuffle Threshold</h3>
-                <p className="small-p">The amount of event cards that aren't used before the event cards are reshuffled.</p>
-                <input type="number" min="0" max="6" value={eventShuffleThreshold} onChange={changeEventShuffleThreshold}></input>
+            {eventDiceIsCardsMode && <div className="flex-container">
+                <div>
+                    <h3>Event Card Deck</h3>
+                    <button onClick={clearEventCards}>Reshuffle Event Card Deck</button>
+                </div>
+                <div>
+                    <h3>Event Card Reshuffle Threshold</h3>
+                    <p className="small-p">The amount of event cards that aren't used before the event cards are reshuffled.</p>
+                    <input type="number" min="0" max="5" value={eventShuffleThreshold} onChange={changeEventShuffleThreshold}></input>
+                </div>
             </div>}
-            {gameModeId != 0 && <div>
-                <h3>Card Deck</h3>
-                <div><button onClick={clearCards}>Clear Card Deck</button></div>
-            </div>}
+
 
             <div>
                 <h3>Roll History</h3>
@@ -256,17 +268,41 @@ function App() {
             <h2>Simulation</h2>
 
             <button onClick={rollDice}>Roll Dice</button>
-            {gameModeId != 0 && <div>
-                <h3>Cards</h3>
-                <p>{cards.length}</p>
+            {classicDiceIsCardsMode && <div className="flex-container">
+                <div>
+                    <h3>Cards</h3>
+                    <p>{cards.length}</p>
+                </div>
+                {cardsIsShuffle && cardsLeftover.length != 0 && <div className="flex-container">
+                    <h3>Cards left</h3>
+                    <div id="leftover-list">
+                        <ul>
+                        {cardsLeftover.map((dice_pair, key) => {
+                            return <DisplayDicePair pair={dice_pair} key={key} />;
+                        })}
+                        </ul>
+                    </div>
+                </div>}
             </div>}
-            {gameModeId == 2 && <div>
-                <h3>Event Cards</h3>
-                <p>{eventCards.length}</p>
+            {eventDiceIsCardsMode && <div className="flex-container">
+                <div>
+                    <h3>Event Cards</h3>
+                    <p>{eventCards.length}</p>
+                </div>
+                {eventCardsIsShuffle && eventCardsLeftover.length != 0 && <div className="flex-container">
+                    <h3>Event Cards left</h3>
+                    <div id="leftover-list">
+                        <ul>
+                        {eventCardsLeftover.map((dice_event, key) => {
+                            return <DisplayDiceEvent event={dice_event} key={key} />;
+                        })}
+                        </ul>
+                    </div>
+                </div>}
             </div>}
             <div>
                 <h3>Last Roll</h3>
-                <DisplayDiceRoll show_sum="true" roll={currentRoll}/>
+                <DisplayDiceRoll roll={currentRoll}/>
             </div>
 
             <div className="flex-container" id="history-container">
@@ -305,6 +341,30 @@ function DisplayDiceRoll(props) {
         <img className="dice" src={"assets/" + props.roll.dice_default + ".svg"} width="20"/>
         <img className="dice" src={"assets/" + props.roll.dice_red + "_red.svg"} width="20"/>
         <img className="dice" src={"assets/" + props.roll.dice_event + ".svg"} width="20"/>
-        {props.show_sum && <p className="roll">{props.roll.sum}</p>}
+    </div>
+}
+
+function DisplayDicePair(props) {
+    //empty roll result
+    if(props.pair == null) return <div>
+        <p>None</p>
+    </div>
+
+    //show roll result
+    return <div>
+        <img className="dice" src={"assets/" + props.pair.dice_default + ".svg"} width="20"/>
+        <img className="dice" src={"assets/" + props.pair.dice_red + "_red.svg"} width="20"/>
+    </div>
+}
+
+function DisplayDiceEvent(props) {
+    //empty roll result
+    if(props.event == null) return <div>
+        <p>None</p>
+    </div>
+
+    //show roll result
+    return <div>
+        <img className="dice" src={"assets/" + props.event + ".svg"} width="20"/>
     </div>
 }
