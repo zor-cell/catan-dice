@@ -73,6 +73,14 @@ function App() {
     const [rollHistory, setRollHistory] = React.useState([]);
     const [showRollHistory, setShowRollHistory] = React.useState(true);
 
+    const [playerName, setPlayerName] = React.useState("");
+    const [players, setPlayers] = React.useState([]);
+    const [playerTurn, setPlayerTurn] = React.useState(0);
+
+    const [ship, setShip] = React.useState(new Array(8).fill(0));
+    const [shipTurn, setShipTurn] = React.useState(0);
+    const [isShipAttack, setIsShipAttack] = React.useState(false);
+
     const [cards, setCards] = React.useState(shuffleCards);
     const [cardShuffleThreshold, setCardShuffleThreshold] = React.useState(5);
     const [cardsIsShuffle, setCardsIsShuffle] = React.useState(false);
@@ -90,7 +98,6 @@ function App() {
     function toggleClassicDiceMode(event) {
         setClassicDiceIsCardsMode(!classicDiceIsCardsMode);
     }
-
     
     function toggleEventDiceMode(event) {
         setEventDiceIsCardsMode(!eventDiceIsCardsMode);
@@ -120,6 +127,27 @@ function App() {
 
     function clearRollHistory(event) {
         setRollHistory([]);
+    }
+
+    function changePlayerName(event) {
+        setPlayerName(event.target.value);
+    }
+
+    function addPlayer(event) {
+        if(playerName === "" || players.length >= 6 || players.includes(playerName)) return;
+
+        setPlayers(players => [...players, playerName]);
+        setPlayerName("");
+    }
+
+    function removePlayer(player) {
+        const newPlayers = [...players];
+        const index = players.indexOf(player);
+        newPlayers.splice(index, 1);
+
+        setPlayers(newPlayers);
+
+        //setPlayerTurn(playerTurn => (playerTurn + 1) % player.length);
     }
 
     function chooseDicePair() {
@@ -168,6 +196,16 @@ function App() {
         let dice_event = chooseDiceEvent();
 
         let roll = new diceRoll(dice_pair, dice_event);
+
+        setPlayerTurn(playerTurn => (playerTurn + 1) % players.length);
+
+        setIsShipAttack(false);
+        if(dice_event == 'e') {
+            if(shipTurn + 1 == ship.length - 1) {
+                setIsShipAttack(true);
+                setShipTurn(0);
+            } else setShipTurn(shipTurn => (shipTurn + 1) % ship.length);
+        }
 
         setCurrentRoll(roll);
         setRollHistory([roll, ...rollHistory]);
@@ -249,9 +287,29 @@ function App() {
         <section className="main-container">
             <h1>Catan Dice Roll Simulation</h1>
             <h2>Parameters</h2>
+
+            <div className="flex-container">
+                <h3>Players</h3>
+                <div className="flex-container-horizontal">
+                    <input type="text" placeholder="Enter name" value={playerName} onChange={changePlayerName}></input>
+                    <button onClick={addPlayer}>Add Player</button>
+                </div>
+                <h4>List</h4>
+                {players.length == 0 && <p>None</p>}
+                <ol>
+                    {players.map((player, key) => {
+                        return (
+                        <div key={key} className="flex-container-horizontal">
+                            <li>{player}</li>
+                            <button onClick={() => removePlayer(player)}>Remove</button>
+                        </div>)
+                    })}
+                </ol>
+            </div>
+
             <div>
                 <h3>Dice Mode</h3>
-                <p className="small-p">The mode of dice rolls.</p>
+                <p>The mode of dice rolls.</p>
 
                 <div className="flex-container-horizontal">
                     <div>
@@ -270,8 +328,8 @@ function App() {
                     <button onClick={clearCards}>Reshuffle Card Deck</button>
                 </div>
                 <div>
-                    <h3>Reshuffle Threshold</h3>
-                    <p className="small-p">The amount of cards that aren't used before the cards are reshuffled.</p>
+                    <h4>Reshuffle Threshold</h4>
+                    <p>The amount of cards that aren't used before the cards are reshuffled.</p>
                     <input type="number" min="0" max="35" value={cardShuffleThreshold} onChange={changeShuffleThreshold}></input>
                 </div>
             </div>}
@@ -281,31 +339,72 @@ function App() {
                     <button onClick={clearEventCards}>Reshuffle Event Card Deck</button>
                 </div>
                 <div>
-                    <h3>Event Card Reshuffle Threshold</h3>
-                    <p className="small-p">The amount of event cards that aren't used before the event cards are reshuffled.</p>
+                    <h4>Event Card Reshuffle Threshold</h4>
+                    <p>The amount of event cards that aren't used before the event cards are reshuffled.</p>
                     <input type="number" min="0" max="5" value={eventShuffleThreshold} onChange={changeEventShuffleThreshold}></input>
                 </div>
             </div>}
 
 
-            <div>
+            <div className="flex-container">
                 <h3>Roll History</h3>
-                <div><button onClick={toggleRollHistory}>{showRollHistory ? "Hide" : "Show"} Roll History</button></div>
-                <br></br>
-                <div><button onClick={clearRollHistory}>Clear Roll History</button></div>
+                <button onClick={toggleRollHistory}>{showRollHistory ? "Hide" : "Show"} Roll History</button>
+                {/*<div><button onClick={clearRollHistory}>Clear Roll History</button></div>*/}
             </div>
         </section>
 
         <section className="main-container">
             <h2>Simulation</h2>
 
-            <button onClick={rollDice}>Roll Dice</button>
+            {players.length > 0 && <div className="flex-container">
+                <h3>Players</h3>
+                <div className="flex-container">
+                        <ol>
+                            {players.map((player, index) => {
+                                return (
+                                index == playerTurn
+                                    ? <b key={index}><li>{player}</li></b> 
+                                    : <li key={index}>{player}</li>
+                                )
+                            })}
+                        </ol>
+                </div>
+            </div>}
+            <div className="flex-container">
+                <h3>Ship</h3>
+                <div className="flex-container-horizontal">
+                        {ship.map((_, index) => {
+                            return (
+                                index == shipTurn
+                                ? <div className="ship-tile-current" key={index}></div>
+                                : (index == ship.length - 1
+                                    ? <div className="ship-tile-last" key={index}></div>
+                                    : <div className="ship-tile" key={index}></div>
+                                )
+                            )
+                        })}
+                </div>
+                {isShipAttack && <p style={{color: "red"}}>Barbarian Attack!</p>}
+            </div>
+
+            <button onClick={rollDice} id="roll-button">Roll Dice</button>
             {classicDiceIsCardsMode && <div className="flex-container">
                 <div>
                     <h3>Cards</h3>
                     <p>{cards.length}</p>
                 </div>
-                {cardsIsShuffle && cardsLeftover.length != 0 && <div className="flex-container">
+            </div>}
+            {eventDiceIsCardsMode && <div className="flex-container">
+                <div>
+                    <h3>Event Cards</h3>
+                    <p>{eventCards.length}</p>
+                </div>
+            </div>}
+            <div>
+                <h3>Last Roll</h3>
+                <DisplayDiceRoll roll={currentRoll}/>
+            </div>
+            {classicDiceIsCardsMode && cardsIsShuffle && cardsLeftover.length != 0 && <div className="flex-container">
                     <h3>Cards left</h3>
                     <div id="leftover-list">
                         <ul>
@@ -315,13 +414,7 @@ function App() {
                         </ul>
                     </div>
                 </div>}
-            </div>}
-            {eventDiceIsCardsMode && <div className="flex-container">
-                <div>
-                    <h3>Event Cards</h3>
-                    <p>{eventCards.length}</p>
-                </div>
-                {eventCardsIsShuffle && eventCardsLeftover.length != 0 && <div className="flex-container">
+            {eventDiceIsCardsMode && eventCardsIsShuffle && eventCardsLeftover.length != 0 && <div className="flex-container">
                     <h3>Event Cards left</h3>
                     <div id="leftover-list">
                         <ul>
@@ -331,11 +424,6 @@ function App() {
                         </ul>
                     </div>
                 </div>}
-            </div>}
-            <div>
-                <h3>Last Roll</h3>
-                <DisplayDiceRoll roll={currentRoll}/>
-            </div>
 
             <div className="flex-container" id="history-container">
                 <h3>Roll History</h3>
