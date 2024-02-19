@@ -197,7 +197,7 @@ function App() {
 
         let roll = new diceRoll(dice_pair, dice_event);
 
-        setPlayerTurn(playerTurn => (playerTurn + 1) % players.length);
+        if(players.length != 0) setPlayerTurn(playerTurn => (playerTurn + 1) % players.length);
 
         setIsShipAttack(false);
         if(dice_event == 'e') {
@@ -282,11 +282,15 @@ function App() {
         Plotly.newPlot('histogram-event', data, layout, {responsive: true, displayModeBar: false});*/
     }
 
+    function useAlchemist() {
+        if(players.length != 0) setPlayerTurn(playerTurn => (playerTurn + 1) % players.length);
+    }
+
     return (
       <main>
+        <h1 className="header">Catan Dice Roll Simulation</h1>
         <section className="main-container">
-            <h1>Catan Dice Roll Simulation</h1>
-            <h2>Parameters</h2>
+            <h2>Settings</h2>
 
             <div className="flex-container">
                 <h3>Players</h3>
@@ -301,7 +305,7 @@ function App() {
                         return (
                         <div key={key} className="flex-container-horizontal">
                             <li>{player}</li>
-                            <button onClick={() => removePlayer(player)}>Remove</button>
+                            <img id="remove-button" src="./assets/remove.svg" onClick={() => removePlayer(player)}></img>
                         </div>)
                     })}
                 </ol>
@@ -331,6 +335,11 @@ function App() {
                     <h4>Reshuffle Threshold</h4>
                     <p>The amount of cards that aren't used before the cards are reshuffled.</p>
                     <input type="number" min="0" max="35" value={cardShuffleThreshold} onChange={changeShuffleThreshold}></input>
+                </div>
+                <div>
+                    <h4>Card Events (COMING SOON)</h4>
+                    <p>Each card can have an event attached.</p>
+                    <button>Set Card Events</button>    
                 </div>
             </div>}
             {eventDiceIsCardsMode && <div className="flex-container">
@@ -439,6 +448,11 @@ function App() {
                         </ul>
                     </div>
                 </div>}
+            </div>
+
+            <div className="flex-container">
+                <h3>Special</h3>
+                <button onClick={useAlchemist}>Alchemist</button>
             </div>
         </section>
       </main>

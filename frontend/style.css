@@ -52,8 +52,12 @@ ul, ol {
     padding: 0;
 }
 
+li {
+    font-size: var(--fs-300);
+}
+
 p {
-    font-size: var(--fs-300)
+    font-size: var(--fs-300);
 }
 
 input {
@@ -104,6 +108,12 @@ table td {
     width: fit-content;
 }
 
+.header {
+    margin: 20px;
+
+    text-align: center;
+}
+
 .main-container {
     display: flex;
     flex-direction: column;
@@ -118,6 +128,7 @@ table td {
     text-align: center;
     /*background-color: var(--clr-primary-100);*/
     border: solid 1px var(--clr-primary-300);
+    border-radius: 15px;
 }
 
 .flex-container {
@@ -214,4 +225,13 @@ table td {
     padding: 8px;
 
     font-size: var(--fs-300);
+}
+
+#remove-button {
+    width: 15px;
+    height: 15px;
+}
+
+#remove-button:hover {
+    opacity: 0.5;
 }
