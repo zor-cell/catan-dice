@@ -438,6 +438,7 @@ function App() {
                     </div>
 
                     <div id="buttons-flex">
+                        {classicDiceIsCardsMode && <p>{cards.length} cards</p>}
                         <button onClick={rollDice} id="roll-button">Dice</button>
                         <button onClick={useAlchemist} id="alchemist-button">Alchemist</button>
                     </div>
