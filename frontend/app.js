@@ -380,7 +380,7 @@ function App() {
                     </div>
 
                     <div className="flex-container">
-                        <h3>Settings sdrfsdf</h3>
+                        <h3>Settings</h3>
 
                         {classicDiceIsCardsMode ? <div className="mode-description">
                                 <div className="settings-balance">
