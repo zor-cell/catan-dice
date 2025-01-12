@@ -286,7 +286,7 @@ input[type=number]::-webkit-inner-spin-button {
 
 .main-container2 {
     width: 90%;
-    margin: 35px auto 0 auto;
+    margin: 35px auto 35px auto;
     display: grid;
     grid-template-columns: 30% 23% 47%;
     box-shadow: 1px 1px 10px rgba(0,0,0,0.1);
@@ -486,7 +486,7 @@ input[type=number]::-webkit-inner-spin-button {
 
 #leftover-list{
     width: 90%;
-    margin: 0px auto;
+    margin: -25px auto 25px auto;
 }
 #leftover-list b {
     padding: 5px 0 0 0;
@@ -512,7 +512,7 @@ input[type=number]::-webkit-inner-spin-button {
 
 
 .wrapper {
-    height: 95vh;
+    min-height: 95vh;
 }
 .main-container3 {
     margin-top: 5vh;

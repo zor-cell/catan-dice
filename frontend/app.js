@@ -291,6 +291,16 @@ function App() {
 
         setCurrentRoll(roll);
         setRollHistory([roll, ...rollHistory]);
+
+        if(dice_event == 'e') {
+            if(shipTurn + 1 == ship.length - 1) {
+                setIsShipAttack(true);
+                setShipTurn(6);
+            } else {
+                setShipTurn(shipTurn => (shipTurn + 1) % ship.length);
+                setIsShipAttack(false);
+            }
+        }
     }
 
     function skipPlayer() {
@@ -441,7 +451,7 @@ function App() {
                                             ? <p key={index}>
                                                 {player}
                                             </p>
-                                            : <p></p>
+                                            : <p> </p>
                                     )
                                 })}
                             </p>
@@ -464,7 +474,7 @@ function App() {
                                 )
                             })}
                             {isShipAttack && <p id="attack">CHARGE </p>}
-                            {!isShipAttack && <p id="safe"> </p>}
+                            {!isShipAttack && <p id="safe"></p>}
                         </div>
                     </div>
                 </section>
@@ -491,8 +501,8 @@ function App() {
                             </ol>
                         </div>
                     </div>}
-
             </section>
+
 
             {showRollHistory &&
             <section className="main-container3">
