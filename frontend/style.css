@@ -113,6 +113,12 @@ h3 {
     position: relative;
     margin: 0 22px 0 auto;
 }
+#back-button {
+    width: 25px;
+    cursor: pointer;
+    position: relative;
+    margin: 18px 18px 0 18px;
+}
 
 #dice-grid {
     display: grid;
@@ -192,7 +198,8 @@ h3 {
     font-weight: bold;
     padding: 5px 10px;
     width: 150px;
-    margin: auto auto 20px auto;
+    display: block;
+    margin: auto;
 }
 #roll-history:hover {
     border-color: rgba(0,0,0,0.5);
@@ -286,7 +293,7 @@ input[type=number]::-webkit-inner-spin-button {
 
 .main-container2 {
     width: 90%;
-    margin: 35px auto 35px auto;
+    margin: 25px auto 25px auto;
     display: grid;
     grid-template-columns: 30% 23% 47%;
     box-shadow: 1px 1px 10px rgba(0,0,0,0.1);
@@ -391,6 +398,11 @@ input[type=number]::-webkit-inner-spin-button {
 
 .card-info {
     margin: auto auto 10px auto;
+}
+
+.start-button {
+    display: block;
+    margin: auto;
 }
 
 .card-info-text {
@@ -544,14 +556,18 @@ input[type=number]::-webkit-inner-spin-button {
 }
 #history-list {
     height: 450px;
-    overflow: hidden;
+    /*overflow: hidden;*/
+    overflow-y: auto;
     border: 2px dashed rgba(0,0,0,0.1);
     border-radius: 5px;
     margin: auto 0;
 }
 #history-list ol {
-    display: grid;
-    grid-template-rows: repeat(13, 40px);
+    /*display: grid;
+    grid-template-rows: repeat(13, 40px);*/
     padding: 0 0px 0 0;
-    margin: 15px 15px 0 15px ;
+    margin: 10px 10px 0 10px ;
+}
+#history-list ol div {
+    padding: 4px;
 }

@@ -91,6 +91,8 @@ function App() {
     const [eventCardsIsShuffle, setEventCardsIsShuffle] = React.useState(false);
     const [eventCardsLeftover, setEventCardsLeftover] = React.useState([]);
 
+    const [gameIsStarted, setGameIsStarted] = React.useState(false);
+
     React.useEffect(() => {
         showHistogram();
     }, [rollHistory, showRollHistory]);
@@ -327,14 +329,15 @@ function App() {
                 <h1 className="header">Catan: Cities and Knights</h1>
                 <h1 className="header2"> - Balanced Dice </h1>
 
-                <section className="main-container">
+                {!gameIsStarted && <div>
+                    <section className="main-container">
                     <div className="flex-container">
                         <h3>Players</h3>
                         <div>
                             <p id="input-container">
                                 <input type="text" placeholder="Name" value={playerName} onChange={changePlayerName}
-                                       className="input"></input>
-                                <button onClick={addPlayer} className="btn">Add</button>
+                                       className="input" disabled={players.length >= 4}></input>
+                                <button onClick={addPlayer} className="btn" disabled={players.length >= 4}>Add</button>
                             </p>
                         </div>
                         <ol id="list">
@@ -349,7 +352,6 @@ function App() {
                                     </div>)
                             })}
                         </ol>
-
                     </div>
 
                     <div className="flex-container">
@@ -372,10 +374,7 @@ function App() {
                                 <div className="knobs"></div>
                                 <div className="layer"></div>
                             </div>
-                        </div>
-                        <button onClick={toggleRollHistory} id="roll-history">{showRollHistory ? "Hide" : "Show"} Roll
-                            History
-                        </button>
+                        </div>                        
                         {/*<div><button onClick={clearRollHistory}>Clear Roll History</button></div>*/}
                     </div>
 
@@ -415,9 +414,12 @@ function App() {
 
                     </div>
                 </section>
+                {players.length > 0 && <button className="btn start-button" onClick={() => {setGameIsStarted(true)}}>Start</button>}
+                </div>}
 
-                <h2>Game Simulation</h2>
-
+                {gameIsStarted && <div>
+                    <img onClick={() => setGameIsStarted(false)} id="back-button" src="./assets/back.svg"></img>
+                    <h2>Game Simulation</h2>
                 <section className="main-container2">
 
                     <div className="flex-container2" id="player-turn">
@@ -438,9 +440,9 @@ function App() {
                     </div>
 
                     <div id="buttons-flex">
-                        {<div class="card-info">
-                            {classicDiceIsCardsMode && <h4 class="card-info-text">{cards.length} / 36</h4>}
-                            {eventDiceIsCardsMode && <h4 class="card-info-text">{eventCards.length} / 6</h4>}
+                        {<div className="card-info">
+                            {classicDiceIsCardsMode && <h4 className="card-info-text">{cards.length} / 36</h4>}
+                            {eventDiceIsCardsMode && <h4 className="card-info-text">{eventCards.length} / 6</h4>}
                         </div>}
                         
                         <button onClick={rollDice} id="roll-button">Dice</button>
@@ -449,7 +451,7 @@ function App() {
 
                     <div className="flex-container2">
                         <div className="current-turn">
-                            <p id="current-turn-player">
+                            <div id="current-turn-player">
                                 {players.map((player, index) => {
                                     return (
                                         index === mod(playerTurn - 1, players.length)
@@ -459,13 +461,13 @@ function App() {
                                             : <p> </p>
                                     )
                                 })}
-                            </p>
+                            </div>
                             <b className="spacer">
                                 |
                             </b>
-                            <p id="current-turn-roll">
+                            <div id="current-turn-roll">
                                 <DisplayDiceRoll roll={currentRoll}/>
-                            </p>
+                            </div>
                         </div>
                         <div className="ship-flex">
                             {ship.map((_, index) => {
@@ -483,6 +485,7 @@ function App() {
                         </div>
                     </div>
                 </section>
+                </div>}
 
                 {classicDiceIsCardsMode && cardsIsShuffle && cardsLeftover.length != 0 &&
                     <div className="flex-container2">
@@ -506,6 +509,10 @@ function App() {
                             </ol>
                         </div>
                     </div>}
+
+                    {gameIsStarted && <button onClick={toggleRollHistory} id="roll-history">{showRollHistory ? "Hide" : "Show"} Roll
+                            History
+                        </button>}
             </section>
 
 
@@ -518,7 +525,7 @@ function App() {
 
                 <div className="flex-container3">
                     <p style={{display: showRollHistory ? "none" : "block"}}>Hidden</p>
-                    {showRollHistory && rollHistory.length == 0 ? <p>None yet</p> :
+                    {showRollHistory && rollHistory.length == 0 ? <p>Empty</p> :
                         <div style={{display: showRollHistory ? "flex" : "none"}} id="histogram-container">
                             <div id="histogram"></div>
                             <div id="history-list">
