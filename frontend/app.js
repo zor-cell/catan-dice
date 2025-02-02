@@ -438,7 +438,11 @@ function App() {
                     </div>
 
                     <div id="buttons-flex">
-                        {classicDiceIsCardsMode && <p>{cards.length} cards</p>}
+                        {<div class="card-info">
+                            {classicDiceIsCardsMode && <h4 class="card-info-text">{cards.length} / 36</h4>}
+                            {eventDiceIsCardsMode && <h4 class="card-info-text">{eventCards.length} / 6</h4>}
+                        </div>}
+                        
                         <button onClick={rollDice} id="roll-button">Dice</button>
                         <button onClick={useAlchemist} id="alchemist-button">Alchemist</button>
                     </div>
