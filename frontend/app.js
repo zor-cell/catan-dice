@@ -516,7 +516,7 @@ function App() {
             </section>
 
 
-            {showRollHistory &&
+            {gameIsStarted && showRollHistory &&
             <section className="main-container3">
 
                 <div id="roll-history-header">

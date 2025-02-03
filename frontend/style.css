@@ -37,6 +37,7 @@ h3 {
     display: grid;
     grid-template-columns: 30% 23% 47%;
 }
+
 .flex-container {
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 25px;
@@ -288,9 +289,6 @@ input[type=number]::-webkit-inner-spin-button {
 
 
 /* Simulation */
-
-
-
 .main-container2 {
     width: 90%;
     margin: 25px auto 25px auto;
@@ -570,4 +568,11 @@ input[type=number]::-webkit-inner-spin-button {
 }
 #history-list ol div {
     padding: 4px;
+}
+
+@media (max-width: 768px) {
+    .main-container, .main-container2 {
+        grid-template-columns: 1fr;
+        grid-auto-flow: row;
+    }
 }
